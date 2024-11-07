@@ -2,6 +2,7 @@ section .data
   colorRed db 0x1B, '[31m', 0  ; ANSI escape code for red
   boldText db 0x1B, '[1m',0
   dimText db 0x1B, '[2m', 0
+  hiddenText db 0x1B, '[8m', 0
   resetColor db 0x1B, '[0m', 0     ; ANSI code to reset color
   clearScreen db 0x1B, '[', '2', 'J', 0x1B, '[', 'H', 0  ; ANSI code to clear screen and reset cursor
   title_padding db 0xa, 0xa, 0xa, 0xa, 0xa, 0
@@ -12,14 +13,15 @@ section .data
     dd 50000000
 
 section .bss
-  userName resb 1
+  userName resb 30
+  passWord resb 1
   choice resb 1
   status resb 1 
   termWidth resw 1
   stringLength resw 1
   
 section .text
-  global _start, user_name, userName, user_input, clear_screen, print_string, status, choice, timespec, title_padding, sleep, bold_text, red_text, boldText, colorRed, get_term_width, print_space, string_length, reset_color, dim_text, print_no_sleep_string
+  global _start, user_name, pass_word, hidden_text, userName, user_input, clear_screen, print_string, status, choice, timespec, title_padding, sleep, bold_text, red_text, boldText, colorRed, get_term_width, print_space, string_length, reset_color, dim_text, print_no_sleep_string
   extern intro
 
 _start:
@@ -47,6 +49,35 @@ user_name:
   mov eax, 3
   mov ebx, 0
   mov ecx, userName
+  mov edx, 30
+  int 0x80
+
+  mov ecx, eax
+  mov esi, userName
+
+  call .find_newline
+  ret
+
+.find_newline:
+  cmp ecx, 0
+  je .user_name_done
+  dec ecx
+  mov al, byte [esi]
+  cmp al, 0x0A
+  je .replace_newline
+  inc esi
+  jmp .find_newline
+
+.replace_newline:
+  mov byte [esi], 0
+
+.user_name_done:
+  ret
+
+pass_word:
+  mov eax, 3
+  mov ebx, 0
+  mov ecx, passWord
   mov edx, 30
   int 0x80
   ret
@@ -120,6 +151,14 @@ dim_text:
   mov eax, 4
   mov ebx, 1 
   mov ecx, dimText
+  mov edx, 4
+  int 0x80
+  ret
+
+hidden_text:
+  mov eax, 4
+  mov ebx, 1 
+  mov ecx, hiddenText 
   mov edx, 4
   int 0x80
   ret
