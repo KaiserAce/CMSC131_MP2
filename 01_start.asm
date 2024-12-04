@@ -1,10 +1,19 @@
 section .data 
-  colorRed db 0x1B, '[31m', 0  ; ANSI escape code for red
+  leftB db "[", 0
+  rightB db "] ", 0
+  typed db "> ", 0
+  system_message db "[SYSTEM] ", 0
+  echo_message db "[ECHO] ", 0
+  press_enter_prompt db "Press <Enter> to respond to ECHO.", 0
+  enter_choice_prompt db "Pick a response. Type 0 or 1 and press <Enter>.", 0
+  choice_0 db " [0] ", 0 
+  choice_1 db " [1] ", 0
+  colorRed db 0x1B, '[31m', 0  
   boldText db 0x1B, '[1m',0
   dimText db 0x1B, '[2m', 0
   hiddenText db 0x1B, '[8m', 0
-  resetColor db 0x1B, '[0m', 0     ; ANSI code to reset color
-  clearScreen db 0x1B, '[', '2', 'J', 0x1B, '[', 'H', 0  ; ANSI code to clear screen and reset cursor
+  resetColor db 0x1B, '[0m', 0     
+  clearScreen db 0x1B, '[', '2', 'J', 0x1B, '[', 'H', 0  
   title_padding db 0xa, 0xa, 0xa, 0xa, 0xa, 0
   ws: times 8 db 0
   space db 200 dup ' '
@@ -15,13 +24,13 @@ section .data
 section .bss
   userName resb 30
   passWord resb 1
-  choice resb 1
   status resb 1 
+  choice resb 1
   termWidth resw 1
   stringLength resw 1
   
 section .text
-  global _start, user_name, pass_word, hidden_text, userName, user_input, clear_screen, print_string, status, choice, timespec, title_padding, sleep, bold_text, red_text, boldText, colorRed, get_term_width, print_space, string_length, reset_color, dim_text, print_no_sleep_string
+  global _start, choice, user_name, pass_word, hidden_text, userName, user_input, clear_screen, print_string, status, choice, timespec, title_padding, sleep, bold_text, red_text, boldText, colorRed, get_term_width, print_space, string_length, reset_color, dim_text, print_no_sleep_string, print_username, print_system, print_echo, print_leftB, print_rightB, print_BusernameB, print_newline, print_typed, prompt_user_respond, prompt_user_choice, print_choice_0, print_choice_1
   extern intro
 
 _start:
@@ -38,10 +47,10 @@ decrease_status:
   ret
 
 user_input:
-  mov eax, 3                ; sys_read
-  mov ebx, 0                ; stdin
-  mov ecx, choice           ; buffer
-  mov edx, 1                ; read 1 byte
+  mov eax, 3                
+  mov ebx, 0          
+  mov ecx, choice           
+  mov edx, 10
   int 0x80
   ret
 
@@ -83,60 +92,134 @@ pass_word:
   ret
 
 print_string:
-  push eax             ; Preserve registers
+  push eax             
   push edx
 
 .next_char:
-  mov al, byte [esi]   ; Load the byte at [esi] into AL
-  test al, al          ; Test if AL is 0 (null terminator)
-  jz .done             ; If zero, end of string
+  mov al, byte [esi]   
+  test al, al         
+  jz .done             
 
-  mov eax, 4           ; Syscall number for sys_write
-  mov ebx, 1           ; File descriptor 1 (stdout)
-  mov ecx, esi         ; Pointer to the current character
-  mov edx, 1           ; Number of bytes to write (1 byte)
-  int 0x80             ; Syscall to write AL to stdout
+  mov eax, 4           
+  mov ebx, 1           
+  mov ecx, esi         
+  mov edx, 1          
+  int 0x80          
 
-  mov ebx, timespec      ; Pointer to timespec structure
+  mov ebx, timespec      
   call sleep
 
-  inc esi              ; Move to the next character
-  jmp .next_char       ; Repeat for the next character
+  inc esi             
+  jmp .next_char      
 
 .done:
-  pop edx              ; Restore registers
+  pop edx              
   pop eax
-  ret                  ; Return to caller
+  ret             
 
 print_no_sleep_string:
-  push eax             ; Preserve registers
+  push eax             
   push edx
 
 .next_char:
-  mov al, byte [esi]   ; Load the byte at [esi] into AL
-  test al, al          ; Test if AL is 0 (null terminator)
-  jz .done             ; If zero, end of string
+  mov al, byte [esi]   
+  test al, al          
+  jz .done            
 
-  mov eax, 4           ; Syscall number for sys_write
-  mov ebx, 1           ; File descriptor 1 (stdout)
-  mov ecx, esi         ; Pointer to the current character
-  mov edx, 1           ; Number of bytes to write (1 byte)
-  int 0x80             ; Syscall to write AL to stdout
+  mov eax, 4           
+  mov ebx, 1           
+  mov ecx, esi        
+  mov edx, 1           
+  int 0x80        
 
-  inc esi              ; Move to the next character
-  jmp .next_char       ; Repeat for the next character
+  inc esi              
+  jmp .next_char       
 
 .done:
-  pop edx              ; Restore registers
+  pop edx              
   pop eax
-  ret                  ; Return to caller
+  ret
+
+print_leftB:
+  mov esi, leftB
+  call print_no_sleep_string
+  ret
+
+print_rightB:
+  mov esi, rightB
+  call print_no_sleep_string
+  ret
+
+print_username:
+  mov esi, userName
+  call print_no_sleep_string
+  ret
+
+print_BusernameB:
+  call print_leftB
+  call print_username
+  call print_rightB
+  ret
+
+print_system:
+  mov esi, system_message
+  call print_no_sleep_string
+  ret
+
+print_echo:
+  mov esi, echo_message
+  call print_no_sleep_string
+  ret
+
+print_newline:
+  mov eax, 4
+  mov ebx, 1 
+  mov ecx, title_padding
+  mov edx, 1 
+  int 0x80
+  ret
+
+print_typed:
+  mov esi, typed
+  call print_no_sleep_string
+  ret
+
+prompt_user_respond:
+  call print_BusernameB
+  call dim_text
+  mov esi, press_enter_prompt
+  call print_no_sleep_string
+  call reset_color
+  ret
+
+prompt_user_choice:
+  call print_BusernameB
+  call dim_text
+  mov esi, enter_choice_prompt
+  call print_no_sleep_string
+  call reset_color
+  ret
+
+print_choice_0:
+  call dim_text
+  mov esi, choice_0
+  call print_no_sleep_string
+  call reset_color
+  ret
+
+print_choice_1:
+  call dim_text
+  mov esi, choice_1
+  call print_no_sleep_string
+  call reset_color
+  ret
 
 red_text:
-  mov eax, 4                ; syscall number for sys_write
-  mov ebx, 1                ; file descriptor for stdout
+  mov eax, 4                
+  mov ebx, 1                
   mov ecx, colorRed
-  mov edx, 5                ; length of the escape code
-  int 0x80                  ; call kernel
+  mov edx, 5                
+  int 0x80                
   ret
 
 bold_text:
@@ -164,19 +247,19 @@ hidden_text:
   ret
 
 reset_color:
-  mov eax, 4                ; syscall number for sys_write
-  mov ebx, 1                ; file descriptor for stdout
-  mov ecx, resetColor      ; address of reset color code
-  mov edx, 4                ; length of the reset code
-  int 0x80                  ; call kernel
+  mov eax, 4              
+  mov ebx, 1                
+  mov ecx, resetColor      
+  mov edx, 4                
+  int 0x80                
   ret
 
 clear_screen:
-  mov eax, 4               ; syscall number for sys_write
-  mov ebx, 1               ; file descriptor for stdout
-  mov ecx, clearScreen    ; address of clear screen code
-  mov edx, 8               ; length of the escape code
-  int 0x80                 ; call kernel
+  mov eax, 4               
+  mov ebx, 1               
+  mov ecx, clearScreen    
+  mov edx, 8               
+  int 0x80        
   ret
 
 exit: 
@@ -185,8 +268,8 @@ exit:
   int 0x80
 
 sleep:
-  mov eax, 162           ; Syscall number for nanosleep
-  mov ecx, 0             ; Set remaining time pointer to null
+  mov eax, 162           
+  mov ecx, 0             
   int 0x80
   ret
 
