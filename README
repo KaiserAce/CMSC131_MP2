@@ -1,0 +1,30 @@
+# To run on a Linux-OS
+Make sure to have nasm and make installed using your package manager.
+
+## For Ubuntu:
+`sudo apt update`
+`sudo apt upgrade`
+`sudo apt install nasm make`
+
+After installing the necessary packages you can run the program using the set command in the Makefile
+
+## To run the program:
+Simply enter the following command in the terminal
+`make`
+
+The program should run shortly after compiling the assembly files and creating an executable.
+
+# To run on a Windows-OS
+Install wsl on your Windows machine
+
+## To install wsl:
+Open your terminal in administrator mode and enter the following command
+
+`wsl --install -d Ubuntu`
+
+Next step is to start your wsl
+
+## To start wsl:
+`wsl --distribution Ubuntu`
+
+After you have activated wsl, you can now follow the steps to running the program for Linux-OS mentioned above.
