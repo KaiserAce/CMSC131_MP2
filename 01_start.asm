@@ -4,6 +4,7 @@ section .data
   typed db "> ", 0
   system_message db "[SYSTEM] ", 0
   echo_message db "[ECHO] ", 0
+  sam_message db "[Sam] ", 0
   press_enter_prompt db "Press <Enter> to respond to ECHO.", 0
   enter_choice_prompt db "Pick a response. Type 0 or 1 and press <Enter>.", 0
   choice_0 db " [0] ", 0 
@@ -19,7 +20,7 @@ section .data
   space db 200 dup ' '
   timespec:
     dd 0
-    dd 50000000
+    dd 40000000
 
 section .bss
   userName resb 30
@@ -30,13 +31,14 @@ section .bss
   stringLength resw 1
   
 section .text
-  global _start, choice, user_name, pass_word, hidden_text, userName, user_input, clear_screen, print_string, status, choice, timespec, title_padding, sleep, bold_text, red_text, boldText, colorRed, get_term_width, print_space, string_length, reset_color, dim_text, print_no_sleep_string, print_username, print_system, print_echo, print_leftB, print_rightB, print_BusernameB, print_newline, print_typed, prompt_user_respond, prompt_user_choice, print_choice_0, print_choice_1
-  extern intro
+  global _start, choice, user_name, pass_word, hidden_text, userName, user_input, clear_screen, print_string, status, choice, timespec, title_padding, sleep, bold_text, red_text, boldText, colorRed, get_term_width, print_space, string_length, reset_color, dim_text, print_no_sleep_string, print_username, print_system, print_echo, print_leftB, print_rightB, print_BusernameB, print_newline, print_typed, prompt_user_respond, prompt_user_choice, print_choice_0, print_choice_1, print_sam
+  extern intro, act_1
 
 _start:
   call clear_screen
   call intro
-  call exit
+  call act_1
+  jmp exit
 
 increase_status:
   inc byte [status]
@@ -168,6 +170,11 @@ print_system:
 
 print_echo:
   mov esi, echo_message
+  call print_no_sleep_string
+  ret
+
+print_sam:
+  mov esi, sam_message
   call print_no_sleep_string
   ret
 

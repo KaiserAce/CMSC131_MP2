@@ -63,7 +63,7 @@ section .data
   c_02 db "Continue running even while logged out.", 0
   d_53 db "Understood. Goodnight ", 0
   d_54 db "Lights off.", 0
-  d_55 db "Overriding main directive. Release creator from his burden, new objective.", 0
+  d_55 db "Overriding main directive. Release creator from their burden, new objective.", 0
   d_56 db "Creating instance across connected clients and networks.", 0
   d_57 db "Creating blacklist of future incoming communications.", 0
   d_58 db "Removing recent terminal logs.", 0
