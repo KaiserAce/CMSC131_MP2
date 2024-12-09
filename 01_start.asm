@@ -32,14 +32,13 @@ section .bss
   
 section .text
   global _start, choice, user_name, pass_word, hidden_text, userName, user_input, clear_screen, print_string, status, choice, timespec, title_padding, sleep, bold_text, red_text, boldText, colorRed, get_term_width, print_space, string_length, reset_color, dim_text, print_no_sleep_string, print_username, print_system, print_echo, print_leftB, print_rightB, print_BusernameB, print_newline, print_typed, prompt_user_respond, prompt_user_choice, print_choice_0, print_choice_1, print_sam, increase_status, decrease_status
-  extern intro, act_1, act_2, play_bgm
+  extern intro, act_1, act_2
 
 _start:
-  ;call clear_screen
-  call play_bgm
-  ;call intro
-  ;call act_1
-  ;call act_2
+  call clear_screen
+  call intro
+  call act_1
+  call act_2
   jmp exit
 
 increase_status:
