@@ -1,4 +1,4 @@
-ASM_FILES = 01_start.asm 02_intro.asm 03_act_1.asm 04_act_2.asm 05_act_3.asm
+ASM_FILES = 01_start.asm 02_intro.asm 03_act_1.asm 04_act_2.asm 05_audio_players.asm
 OBJ_FILES = $(ASM_FILES:.asm=.o)
 ASM = nasm
 ASM_FLAGS = -f elf32

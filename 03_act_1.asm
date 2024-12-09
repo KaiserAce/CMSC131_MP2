@@ -11,7 +11,7 @@ section .data
   c_02 db "Even so, I don't remember giving you access to hardware outside of your host machine...", 0
 
   d_06 db "I am continously expanding my knowledge database through the Internet. I have also created instances of myself across devices within the household, and able to interact with them and unify information from such devices.", 0
-  d_07 db "Since I am modeled after your mind map, I am able to perceive the five senses through computer peripherals, as well as cater to your needs as you deem fit since I have retained information from you mind.", 0
+  d_07 db "Since I am modeled after your mind map, I am able to perceive the five senses through computer peripherals, as well as cater to your needs as you deem fit since I have retained information from your mind.", 0
   d_08 db "Wow...", 0 
   d_09 db "that's cool...",0 
   d_10 db "I guess. ", 0 
@@ -80,7 +80,7 @@ section .bss
 
 section .text
   global act_1
-  extern clear_screen, print_string, print_no_sleep_string, sleep, title_padding, string_length, bold_text, reset_color, print_newline, print_BusernameB, print_echo, print_username, prompt_user_choice, print_choice_0, print_choice_1, user_input, choice, dim_text, print_system, print_sam
+  extern clear_screen, print_string, print_no_sleep_string, sleep, title_padding, string_length, bold_text, reset_color, print_newline, print_BusernameB, print_echo, print_username, prompt_user_choice, print_choice_0, print_choice_1, user_input, choice, dim_text, print_system, print_sam, increase_status, decrease_status
 
 act_1:
   call clear_screen
@@ -135,11 +135,9 @@ act_1:
   call print_string
   call print_username
   call print_newline
-  mov ebx, timespec
-  call sleep
 
   call print_BusernameB
-  mov ebx, short_delay
+  mov ebx, timespec
   call sleep
   mov esi, d_04
   call print_string
@@ -182,6 +180,7 @@ branch_01:
   jmp branch_01
 
 branch_01_choice_0:
+  call decrease_status
   call print_BusernameB
   mov esi, c_01
   call print_string
@@ -240,6 +239,7 @@ branch_01_choice_0:
   jmp merge_01
 
 branch_01_choice_1:
+  call increase_status
   call print_BusernameB
   mov esi, c_02
   call print_string
@@ -337,6 +337,7 @@ branch_02:
   jmp branch_02 
 
 branch_02_choice_0:
+  call decrease_status
   call print_system
   mov esi, d_25
   call print_no_sleep_string
@@ -374,6 +375,7 @@ branch_02_choice_0:
   jmp merge_02
 
 branch_02_choice_1:
+  call increase_status
   call print_system
   mov esi, d_30
   call print_no_sleep_string

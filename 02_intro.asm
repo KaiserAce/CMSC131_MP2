@@ -78,7 +78,7 @@ section .data
 section .bss
   
 section .text
-  global intro
+  global intro, login_padding
   extern title_padding, choice, sleep, print_string, boldText, bold_text, get_term_width, print_space, string_length, reset_color, dim_text, clear_screen, user_input, print_no_sleep_string, user_name, userName, hidden_text, pass_word, print_username, print_system, print_echo, print_leftB, print_rightB, print_BusernameB, print_newline, print_typed, prompt_user_respond, prompt_user_choice, print_choice_0, print_choice_1
 
 intro:
